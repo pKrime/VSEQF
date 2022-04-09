@@ -36,10 +36,8 @@ bl_info = {
 }
 
 
-vseqf_draw_handler = None
 vu_meter_draw_handler = None
 frame_step_handler = None
-continuous_handler = None
 
 
 #Functions related to QuickSpeed
