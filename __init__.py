@@ -291,170 +291,11 @@ class VSEQFSetting(bpy.types.PropertyGroup):
         name="VU Meter Max Level",
         default=-60)
 
-    children: bpy.props.BoolProperty(
-        name="Cut/Move Children",
-        default=True,
-        description="Automatically cut and move child strips along with a parent.")
-    autoparent: bpy.props.BoolProperty(
-        name="Auto-Parent New Audio To Video",
-        default=True,
-        description="Automatically parent audio strips to video when importing a movie with both types of strips.")
-    select_children: bpy.props.BoolProperty(
-        name="Auto-Select Children",
-        default=False,
-        description="Automatically select child strips when a parent is selected.")
-    expanded_children: bpy.props.BoolProperty(default=True)
-    delete_children: bpy.props.BoolProperty(
-        name="Auto-Delete Children",
-        default=False,
-        description="Automatically delete child strips when a parent is deleted.")
-    move_edges: bpy.props.BoolProperty(
-        name="Move Matching Child Edges",
-        default=True,
-        description="When a child edge matches a parent's, it will be moved when the parent's edge is moved.")
-
-    transition: bpy.props.EnumProperty(
-        name="Transition Type",
-        default="CROSS",
-        items=[("CROSS", "Crossfade", "", 1), ("WIPE", "Wipe", "", 2), ("GAMMA_CROSS", "Gamma Cross", "", 3)])
-    fade: bpy.props.IntProperty(
-        name="Fade Length",
-        default=10,
-        min=0,
-        description="Default Fade Length In Frames")
-    fadein: bpy.props.IntProperty(
-        name="Fade In Length",
-        default=0,
-        min=0,
-        description="Current Fade In Length In Frames")
-    fadeout: bpy.props.IntProperty(
-        name="Fade Out Length",
-        default=0,
-        min=0,
-        description="Current Fade Out Length In Frames")
-
-    enable_proxy: bpy.props.BoolProperty(
-        name="Enable Proxy On Import",
-        default=False)
-    build_proxy: bpy.props.BoolProperty(
-        name="Auto-Build Proxy On Import",
-        default=False)
-    proxy_25: bpy.props.BoolProperty(
-        name="25%",
-        default=True)
-    proxy_50: bpy.props.BoolProperty(
-        name="50%",
-        default=False)
-    proxy_75: bpy.props.BoolProperty(
-        name="75%",
-        default=False)
-    proxy_100: bpy.props.BoolProperty(
-        name="100%",
-        default=False)
-    proxy_quality: bpy.props.IntProperty(
-        name="Quality",
-        default=90,
-        min=1,
-        max=100)
-
-    current_marker_frame: bpy.props.IntProperty(
-        default=0)
-    marker_index: bpy.props.IntProperty(
-        name="Marker Display Index",
-        default=0)
-
-    expanded_markers: bpy.props.BoolProperty(default=True)
-    current_marker: bpy.props.StringProperty(
-        name="New Preset",
-        default='')
-    marker_deselect: bpy.props.BoolProperty(
-        name="Deselect New Markers",
-        default=True,
-        description="Markers added with this interface will not be selected when added")
-
-
     step: bpy.props.IntProperty(
         name="Frame Step",
         default=0,
         min=-4,
         max=4)
-    skip_index: bpy.props.IntProperty(
-        default=0)
-
-    current_tag: bpy.props.StringProperty(
-        name="New Tag",
-        default='')
-
-
-    show_selected_tags: bpy.props.BoolProperty(
-        name="Show Tags For All Selected Sequences",
-        default=False)
-    tag_index: bpy.props.IntProperty(
-        name="Tag Display Index",
-        default=0)
-    strip_tag_index: bpy.props.IntProperty(
-        name="Strip Tag Display Index",
-        default=0)
-
-    quickcuts_insert: bpy.props.IntProperty(
-        name="Frames To Insert",
-        default=0,
-        min=0,
-        description='Number of frames to insert when performing an insert cut')
-    quickcuts_all: bpy.props.BoolProperty(
-        name='Cut All Sequences',
-        default=False,
-        description='Cut all sequences, regardless of selection (not including locked sequences)')
-    snap_new_end: bpy.props.BoolProperty(
-        name='Snap Cursor To End Of New Sequences',
-        default=False)
-    snap_cursor_to_edge: bpy.props.BoolProperty(
-        name='Snap Cursor When Dragging Edges',
-        default=False)
-
-
-class VSEQuickFunctionSettings(bpy.types.AddonPreferences):
-    """Addon preferences for QuickFunctions, used to enable and disable features"""
-    bl_idname = __name__
-
-    parenting: bpy.props.BoolProperty(
-        name="Enable Quick Parenting",
-        default=True)
-    fades: bpy.props.BoolProperty(
-        name="Enable Quick Fades",
-        default=True)
-    proxy: bpy.props.BoolProperty(
-        name="Enable Quick Proxy",
-        default=True)
-    markers: bpy.props.BoolProperty(
-        name="Enable Quick Markers",
-        default=True)
-    tags: bpy.props.BoolProperty(
-        name="Enable Quick Tags",
-        default=True)
-    cuts: bpy.props.BoolProperty(
-        name="Enable Quick Cuts",
-        default=True)
-    edit: bpy.props.BoolProperty(
-        name="Enable Compact Edit Panel",
-        default=False)
-    threepoint: bpy.props.BoolProperty(
-        name="Enable Quick Three Point",
-        default=True)
-
-    def draw(self, context):
-        layout = self.layout
-        layout.prop(self, "parenting")
-        layout.prop(self, "fades")
-        layout.prop(self, "proxy")
-        layout.prop(self, "markers")
-        layout.prop(self, "tags")
-        layout.prop(self, "cuts")
-        layout.prop(self, "edit")
-        layout.prop(self, "threepoint")
-
-        mainrow = layout.row()
-        col = mainrow.column()
 
 
 def selected_sequences_len(context):
@@ -506,7 +347,6 @@ classes.append(VSEQFSetting)
 
 
 def register():
-    bpy.utils.register_class(VSEQuickFunctionSettings)
 
     #Register classes
     for cls in classes:
@@ -564,11 +404,6 @@ def unregister():
     remove_vu_draw_handler()
     remove_frame_step_handler()
     remove_continuous_handler()
-
-    try:
-        bpy.utils.unregister_class(VSEQuickFunctionSettings)
-    except RuntimeError:
-        pass
 
     #Unregister classes
     for cls in reversed(classes):
