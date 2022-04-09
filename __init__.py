@@ -269,15 +269,6 @@ def frame_step(scene):
     scene.vseqf.last_frame = scene.frame_current
 
 
-def draw_quickspeed_header(self, context):
-    """Draws the speed selector in the sequencer header"""
-    layout = self.layout
-    scene = context.scene
-    self.layout_width = 30
-    layout.prop(scene.vseqf, 'step', text="Speed Step")
-
-
-
 class VSEQFSetting(bpy.types.PropertyGroup):
     """Property group to store most VSEQF settings.  This will be assigned to scene.vseqf"""
 
@@ -297,12 +288,6 @@ class VSEQFSetting(bpy.types.PropertyGroup):
         min=-4,
         max=4)
 
-
-def selected_sequences_len(context):
-    try:
-        return len(context.selected_sequences) if context.selected_sequences else 0
-    except AttributeError:
-        return 0
 
 def remove_vu_draw_handler(add=False):
     global vu_meter_draw_handler
@@ -363,12 +348,6 @@ def register():
             pass
     vseqf_draw_handler = bpy.types.SpaceSequenceEditor.draw_handler_add(vseqf_draw, (), 'WINDOW', 'POST_PIXEL')
 
-    try:
-        bpy.types.TIME_HT_editor_buttons.append(draw_quickspeed_header)
-    except:
-        #Fix for blender 2.91, move the quickspeed header...
-        bpy.types.DOPESHEET_HT_header.append(draw_quickspeed_header)
-
     #New variables
     bpy.types.Scene.vseqf_skip_interval = bpy.props.IntProperty(default=0, min=0)
     bpy.types.Scene.vseqf = bpy.props.PointerProperty(type=VSEQFSetting)
@@ -379,20 +358,12 @@ def register():
 
     #Register handlers
     remove_frame_step_handler(add=True)
-    remove_continuous_handler(add=True)
     remove_vu_draw_handler(add=True)
 
 
 def unregister():
     global vseqf_draw_handler
     bpy.types.SpaceSequenceEditor.draw_handler_remove(vseqf_draw_handler, 'WINDOW')
-
-    #Unregister menus
-
-    try:
-        bpy.types.TIME_HT_editor_buttons.remove(draw_quickspeed_header)
-    except:
-        bpy.types.DOPESHEET_HT_header.remove(draw_quickspeed_header)
 
     #Remove shortcuts
     keymapitems = bpy.context.window_manager.keyconfigs.addon.keymaps['Sequencer'].keymap_items
@@ -403,7 +374,6 @@ def unregister():
     #Remove handlers
     remove_vu_draw_handler()
     remove_frame_step_handler()
-    remove_continuous_handler()
 
     #Unregister classes
     for cls in reversed(classes):
