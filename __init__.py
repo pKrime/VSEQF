@@ -18,22 +18,18 @@
 
 
 import bpy
-import math
-
 from bpy.app.handlers import persistent
 
-from . import timeline
-from . import vseqf
 from . import vu_meter
 
 
 bl_info = {
     "name": "VSE Volume Meter",
     "description": "Just the volume meter from VSEQF (https://github.com/snuq/VSEQF)",
-    "author": "Hudson Barkley (Snu/snuq/Aritodo)",
+    "author": "Paolo Acampora, forked from Hudson Barkley (Snu/snuq/Aritodo)",
     "version": (3, 1, 1),
     "blender": (3, 1, 0),
-    "location": "Sequencer Panels; Sequencer Menus; Sequencer S, F, Shift-F, Z, Ctrl-P, Shift-P, Alt-M, Alt-K Shortcuts",
+    "location": "Sequencer",
     "wiki_url": "https://github.com/snuq/VSEQF",
     "tracker_url": "https://github.com/snuq/VSEQF/issues",
     "category": "Sequencer"
@@ -44,37 +40,6 @@ vseqf_draw_handler = None
 vu_meter_draw_handler = None
 frame_step_handler = None
 continuous_handler = None
-
-classes = []
-classes = classes + [vu_meter.VUMeterCheckClipping]
-
-
-def vseqf_draw():
-    context = bpy.context
-    prefs = vseqf.get_prefs()
-    colors = bpy.context.preferences.themes[0].user_interface
-    text_color = list(colors.wcol_text.text_sel)+[1]
-    active_strip = timeline.current_active(context)
-    if not active_strip:
-        return
-    region = bpy.context.region
-    view = region.view2d
-
-    #determine pixels per frame and channel
-    width = region.width
-    height = region.height
-    left, bottom = view.region_to_view(0, 0)
-    right, top = view.region_to_view(width, height)
-    if math.isnan(left):
-        return
-    shown_width = right - left
-    shown_height = top - bottom
-    channel_px = height / shown_height
-    frame_px = width / shown_width
-
-    min_x = 25
-    max_x = width - 10
-    fps = vseqf.get_fps()
 
 
 #Functions related to QuickSpeed
@@ -141,21 +106,9 @@ def remove_frame_step_handler(add=False):
         frame_step_handler = handlers.append(frame_step)
 
 
-#Register properties, operators, menus and shortcuts
-classes.append(VSEQFSetting)
-
-
 def register():
     bpy.utils.register_class(VSEQFSetting)
     bpy.utils.register_class(vu_meter.VUMeterCheckClipping)
-
-    global vseqf_draw_handler
-    if vseqf_draw_handler:
-        try:
-            bpy.types.SpaceSequenceEditor.draw_handler_remove(vseqf_draw_handler, 'WINDOW')
-        except:
-            pass
-    vseqf_draw_handler = bpy.types.SpaceSequenceEditor.draw_handler_add(vseqf_draw, (), 'WINDOW', 'POST_PIXEL')
 
     #New variables
     bpy.types.Scene.vseqf_skip_interval = bpy.props.IntProperty(default=0, min=0)
@@ -171,9 +124,6 @@ def register():
 
 
 def unregister():
-    global vseqf_draw_handler
-    bpy.types.SpaceSequenceEditor.draw_handler_remove(vseqf_draw_handler, 'WINDOW')
-
     #Remove handlers
     remove_vu_draw_handler()
     remove_frame_step_handler()
