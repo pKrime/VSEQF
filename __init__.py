@@ -91,17 +91,9 @@ from bpy_extras.io_utils import ImportHelper
 from bpy.app.handlers import persistent
 from gpu_extras.batch import batch_for_shader
 
-from . import cuts
 from . import fades
-from . import grabs
-from . import markers
 from . import parenting
-from . import shortcuts
-from . import snaps
-from . import tags
-from . import threepoint
 from . import timeline
-from . import zoom
 from . import vseqf
 from . import vu_meter
 
@@ -117,9 +109,6 @@ bl_info = {
     "tracker_url": "https://github.com/snuq/VSEQF/issues",
     "category": "Sequencer"
 }
-from .addon_updater import Updater as updater
-updater.addon = "vseqf"
-from . import addon_updater_ops
 
 vseqf_draw_handler = None
 vu_meter_draw_handler = None
@@ -128,37 +117,13 @@ continuous_handler = None
 
 classes = []
 
-classes = classes + [cuts.VSEQFCut, cuts.VSEQFQuickCutsMenu, cuts.VSEQF_PT_QuickCutsPanel, cuts.VSEQFDelete,
-                     cuts.VSEQFDeleteConfirm, cuts.VSEQFDeleteRippleConfirm]
 classes = classes + [fades.VSEQFModalFades, fades.VSEQF_PT_QuickFadesPanel, fades.VSEQFQuickFadesMenu,
                      fades.VSEQFQuickFadesSet, fades.VSEQFQuickFadesClear, fades.VSEQFQuickFadesCross,
                      fades.VSEQFModalVolumeDraw, fades.VSEQF_PT_QuickFadesStripPanel]
-classes = classes + [grabs.VSEQFContextMenu, grabs.VSEQFContextCursor, grabs.VSEQFContextMarker, grabs.VSEQFContextNone,
-                     grabs.VSEQFContextSequence, grabs.VSEQFDoubleUndo, grabs.VSEQFContextSequenceLeft,
-                     grabs.VSEQFContextSequenceRight, grabs.VSEQFGrab, grabs.VSEQFGrabAdd, grabs.VSEQFSelectGrab]
-classes = classes + [markers.VSEQF_PT_QuickMarkersPanel, markers.VSEQF_UL_QuickMarkerPresetList,
-                     markers.VSEQF_UL_QuickMarkerList, markers.VSEQFQuickMarkerDelete, markers.VSEQFQuickMarkerMove,
-                     markers.VSEQFQuickMarkerRename, markers.VSEQFQuickMarkerJump, markers.VSEQFQuickMarkersMenu,
-                     markers.VSEQFQuickMarkersPlace, markers.VSEQFQuickMarkersRemovePreset,
-                     markers.VSEQFQuickMarkersAddPreset, markers.VSEQFMarkerPreset]
 classes = classes + [parenting.VSEQF_PT_Parenting, parenting.VSEQFQuickParentsMenu, parenting.VSEQFQuickParents,
                      parenting.VSEQFQuickParentsClear]
-classes = classes + [snaps.VSEQFQuickSnapsMenu, snaps.VSEQFQuickSnaps]
-classes = classes + [shortcuts.VSEQFQuickShortcutsNudge, shortcuts.VSEQFQuickShortcutsSpeed,
-                     shortcuts.VSEQFQuickShortcutsSkip, shortcuts.VSEQFQuickShortcutsResetPlay]
-classes = classes + [tags.VSEQFQuickTagsMenu, tags.VSEQF_PT_QuickTagsPanel, tags.VSEQF_UL_QuickTagListAll,
-                     tags.VSEQF_UL_QuickTagList, tags.VSEQFQuickTagsClear, tags.VSEQFQuickTagsSelect,
-                     tags.VSEQFQuickTagsRemoveFrom, tags.VSEQFQuickTagsRemove, tags.VSEQFQuickTagsStripMarkerMenu,
-                     tags.VSEQFQuickTagsAdd, tags.VSEQFQuickTagsAddActive, tags.VSEQFTags, tags.VSEQFQuickTagsAddMarker,
-                     tags.VSEQFQuickTagsRemoveMarker]
-classes = classes + [threepoint.VSEQF_PT_ThreePointBrowserPanel, threepoint.VSEQFThreePointImportToClip,
-                     threepoint.VSEQF_PT_ThreePointPanel, threepoint.VSEQFThreePointImport,
-                     threepoint.VSEQFThreePointOperator, threepoint.VSEQFQuick3PointValues]
 classes = classes + [timeline.VSEQFMeta, timeline.VSEQFMetaExit, timeline.VSEQFQuickTimeline,
                      timeline.VSEQFQuickTimelineMenu]
-classes = classes + [zoom.VSEQFQuickZoomsMenu, zoom.VSEQFQuickZoomPresetMenu, zoom.VSEQFQuickZoomPreset,
-                     zoom.VSEQFClearZooms, zoom.VSEQFRemoveZoom, zoom.VSEQFAddZoom, zoom.VSEQFQuickZooms,
-                     zoom.VSEQFZoomPreset]
 classes = classes + [vu_meter.VUMeterCheckClipping]
 
 
@@ -858,17 +823,7 @@ def draw_strip_info(context, active_strip, fps, frame_px, channel_px, min_x, max
 
     if show_markers:
         bgl.glEnable(bgl.GL_BLEND)
-        for tag in active_strip.tags:
-            if tag.use_offset:
-                if active_strip.frame_offset_start < tag.offset <= active_strip.frame_final_duration + active_strip.frame_offset_start - active_strip.frame_still_start:
-                    adjusted_offset = tag.offset - 1 - active_strip.frame_offset_start + active_strip.frame_still_start
-                    left = active_left + (adjusted_offset * frame_px)
-                    width = tag.length * frame_px
-                    if left + width > active_right:
-                        width = active_right - left
-                    bgl.glEnable(bgl.GL_BLEND)
-                    vseqf.draw_rect(left, active_bottom, width, channel_px, color=(tag.color[0], tag.color[1], tag.color[2], 0.33))
-                    vseqf.draw_text(left, active_top, text_size, tag.text)
+
         bgl.glDisable(bgl.GL_BLEND)
 
 
@@ -948,11 +903,6 @@ class VSEQFSetting(bpy.types.PropertyGroup):
     vu_max: bpy.props.FloatProperty(
         name="VU Meter Max Level",
         default=-60)
-
-    zoom_presets: bpy.props.CollectionProperty(type=zoom.VSEQFZoomPreset)
-    last_frame: bpy.props.IntProperty(
-        name="Last Scene Frame",
-        default=1)
 
     shortcut_skip: bpy.props.IntProperty(
         name="Shortcut Skip Frames",
@@ -1035,8 +985,7 @@ class VSEQFSetting(bpy.types.PropertyGroup):
     marker_index: bpy.props.IntProperty(
         name="Marker Display Index",
         default=0)
-    marker_presets: bpy.props.CollectionProperty(
-        type=markers.VSEQFMarkerPreset)
+
     expanded_markers: bpy.props.BoolProperty(default=True)
     current_marker: bpy.props.StringProperty(
         name="New Preset",
@@ -1046,12 +995,7 @@ class VSEQFSetting(bpy.types.PropertyGroup):
         default=True,
         description="Markers added with this interface will not be selected when added")
 
-    zoom_size: bpy.props.IntProperty(
-        name='Zoom Amount',
-        default=200,
-        min=1,
-        description="Zoom size in frames",
-        update=zoom.zoom_cursor)
+
     step: bpy.props.IntProperty(
         name="Frame Step",
         default=0,
@@ -1063,8 +1007,8 @@ class VSEQFSetting(bpy.types.PropertyGroup):
     current_tag: bpy.props.StringProperty(
         name="New Tag",
         default='')
-    tags: bpy.props.CollectionProperty(type=tags.VSEQFTags)
-    selected_tags: bpy.props.CollectionProperty(type=tags.VSEQFTags)
+
+
     show_selected_tags: bpy.props.BoolProperty(
         name="Show Tags For All Selected Sequences",
         default=False)
@@ -1120,34 +1064,6 @@ class VSEQuickFunctionSettings(bpy.types.AddonPreferences):
     threepoint: bpy.props.BoolProperty(
         name="Enable Quick Three Point",
         default=True)
-
-    auto_check_update: bpy.props.BoolProperty(
-        name="Auto-check for Update",
-        description="If enabled, auto-check for updates using an interval",
-        default=False)
-    updater_intrval_months: bpy.props.IntProperty(
-        name='Months',
-        description="Number of months between checking for updates",
-        default=0,
-        min=0)
-    updater_intrval_days: bpy.props.IntProperty(
-        name='Days',
-        description="Number of days between checking for updates",
-        default=7,
-        min=0,
-        max=31)
-    updater_intrval_hours: bpy.props.IntProperty(
-        name='Hours',
-        description="Number of hours between checking for updates",
-        default=0,
-        min=0,
-        max=23)
-    updater_intrval_minutes: bpy.props.IntProperty(
-        name='Minutes',
-        description="Number of minutes between checking for updates",
-        default=0,
-        min=0,
-        max=59)
 
     def draw(self, context):
         layout = self.layout
@@ -1537,12 +1453,6 @@ def register_keymaps():
 
 
 def register():
-    addon_updater_ops.register(bl_info)
-    updater.user = "snuq"
-    updater.repo = "VSEQF"
-    updater.website = "https://github.com/snuq/VSEQF"
-    updater.verbose = False
-
     bpy.utils.register_class(VSEQuickFunctionSettings)
 
     #Register classes
@@ -1576,13 +1486,13 @@ def register():
     bpy.types.Scene.vseqf_skip_interval = bpy.props.IntProperty(default=0, min=0)
     bpy.types.Scene.vseqf = bpy.props.PointerProperty(type=VSEQFSetting)
     bpy.types.Sequence.parent = bpy.props.StringProperty()
-    bpy.types.Sequence.tags = bpy.props.CollectionProperty(type=tags.VSEQFTags)
+
     bpy.types.Sequence.new = bpy.props.BoolProperty(default=True)
     bpy.types.Sequence.last_name = bpy.props.StringProperty()
-    bpy.types.MovieClip.import_settings = bpy.props.PointerProperty(type=threepoint.VSEQFQuick3PointValues)
+
 
     #Register shortcuts
-    register_keymaps()
+    #register_keymaps()
 
     #Register handlers
     remove_frame_step_handler(add=True)
@@ -1623,8 +1533,6 @@ def unregister():
     #Unregister classes
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-
-    addon_updater_ops.unregister()
 
 
 if __name__ == "__main__":
