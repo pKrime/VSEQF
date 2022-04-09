@@ -51,14 +51,6 @@ frame_step_handler = None
 continuous_handler = None
 
 classes = []
-
-classes = classes + [fades.VSEQFModalFades, fades.VSEQF_PT_QuickFadesPanel, fades.VSEQFQuickFadesMenu,
-                     fades.VSEQFQuickFadesSet, fades.VSEQFQuickFadesClear, fades.VSEQFQuickFadesCross,
-                     fades.VSEQFModalVolumeDraw, fades.VSEQF_PT_QuickFadesStripPanel]
-classes = classes + [parenting.VSEQF_PT_Parenting, parenting.VSEQFQuickParentsMenu, parenting.VSEQFQuickParents,
-                     parenting.VSEQFQuickParentsClear]
-classes = classes + [timeline.VSEQFMeta, timeline.VSEQFMetaExit, timeline.VSEQFQuickTimeline,
-                     timeline.VSEQFQuickTimelineMenu]
 classes = classes + [vu_meter.VUMeterCheckClipping]
 
 
@@ -757,10 +749,6 @@ def register():
 
     bpy.types.Sequence.new = bpy.props.BoolProperty(default=True)
     bpy.types.Sequence.last_name = bpy.props.StringProperty()
-
-
-    #Register shortcuts
-    #register_keymaps()
 
     #Register handlers
     remove_frame_step_handler(add=True)
