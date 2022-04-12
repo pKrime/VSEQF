@@ -112,11 +112,13 @@ def vu_meter_draw():
         bottom_section = 40
         top_section = 20
 
-        text_color = [1, 1, 1, 1]
-        warn_color = [1, .0, .0, 1]
-        very_high_color = [1, .6, .6, 1]
-        high_color = [1, 1, .5, 1]
-        bg_color = [0, 0, 0, 1]
+        addon_prefs = context.preferences.addons[__package__].preferences
+        text_color = list(addon_prefs.text_color) + [1.0]
+        warn_color = list(addon_prefs.warn_color) + [1.0]
+        very_high_color = list(addon_prefs.very_high_color) + [1.0]
+        high_color = list(addon_prefs.high_color) + [1.0]
+        bg_color = list(addon_prefs.bg_color) + [1.0]
+
         region = context.region
         max_height = region.height - top_section
         meter_height = max_height - bottom_section
