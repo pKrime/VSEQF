@@ -118,6 +118,7 @@ def vu_meter_draw():
         very_high_color = list(addon_prefs.very_high_color) + [1.0]
         high_color = list(addon_prefs.high_color) + [1.0]
         bg_color = list(addon_prefs.bg_color) + [1.0]
+        text_color = list(addon_prefs.text_color) + [1.0]
 
         region = context.region
         max_height = region.height - top_section
@@ -134,7 +135,7 @@ def vu_meter_draw():
         ]
         for mark in marks:
             height = 1 + bottom_section + (mark[0] * meter_height)
-            vseqf.draw_text(offset_x, height, 10, mark[1], color=(.5, .5, .5, 1))
+            vseqf.draw_text(offset_x, height, 10, mark[1], color=text_color)
         vu = vseqf_settings.vu
         if vu > 0:
             vu = 0
