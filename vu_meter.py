@@ -113,7 +113,7 @@ def vu_meter_draw():
         top_section = 20
 
         addon_prefs = context.preferences.addons[__package__].preferences
-        text_color = list(addon_prefs.text_color) + [1.0]
+        bar_color = list(addon_prefs.bar_color) + [1.0]
         warn_color = list(addon_prefs.warn_color) + [1.0]
         very_high_color = list(addon_prefs.very_high_color) + [1.0]
         high_color = list(addon_prefs.high_color) + [1.0]
@@ -140,7 +140,7 @@ def vu_meter_draw():
             vu = 0
             vu_color = warn_color
         else:
-            vu_color = text_color
+            vu_color = bar_color
         vu_percent = ((vu + -vu_meter_min)/-vu_meter_min)
         vu_size = meter_height * vu_percent
 
@@ -166,7 +166,7 @@ def vu_meter_draw():
         elif vu_max > -18:
             vu_max_color = high_color
         else:
-            vu_max_color = text_color
+            vu_max_color = bar_color
         vu_max_percent = ((vu_max + -vu_meter_min)/-vu_meter_min)
         vu_max_pos = meter_height * vu_max_percent
         vseqf.draw_rect(offset_x + 2, bottom_section + vu_max_pos - 2, 15, 2, vu_max_color)

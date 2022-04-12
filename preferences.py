@@ -14,9 +14,9 @@ class VolumeMeterPrefs(bpy.types.AddonPreferences):
         max=1.0,
     )
 
-    text_color: FloatVectorProperty(
-        name='Text Color',
-        description='Text Color',
+    bar_color: FloatVectorProperty(
+        name='Bar Color',
+        description='Bar Color',
         subtype='COLOR',
         default=(1.0, 1.0, 1.0),
         min=0.0,
@@ -60,7 +60,7 @@ class VolumeMeterPrefs(bpy.types.AddonPreferences):
 
         col = split.column()
         col.prop(self, 'bg_color')
-        col.prop(self, 'text_color')
+        col.prop(self, 'bar_color')
 
         col = split.column()
         col.prop(self, 'high_color')
