@@ -21,6 +21,11 @@ import bpy
 from bpy.app.handlers import persistent
 
 from . import vu_meter
+from . import preferences
+
+from importlib import reload
+reload(vu_meter)
+reload(preferences)
 
 
 bl_info = {
@@ -107,6 +112,7 @@ def remove_frame_step_handler(add=False):
 def register():
     bpy.utils.register_class(VSEQFSetting)
     bpy.utils.register_class(vu_meter.VUMeterCheckClipping)
+    preferences.register()
 
     #New variables
     bpy.types.Scene.vseqf_skip_interval = bpy.props.IntProperty(default=0, min=0)
@@ -128,6 +134,7 @@ def unregister():
 
     bpy.utils.unregister_class(vu_meter.VUMeterCheckClipping)
     bpy.utils.unregister_class(VSEQFSetting)
+    preferences.unregister()
 
 
 if __name__ == "__main__":
