@@ -173,7 +173,7 @@ def vu_meter_draw():
 
 
 class VUMeterCheckClipping(bpy.types.Operator):
-    bl_idname = 'vseqf.check_clipping'
+    bl_idname = 'vse_volume_meter.check_clipping'
     bl_label = 'Check For Audio Clipping'
 
     start = 0
