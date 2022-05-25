@@ -23,10 +23,6 @@ from bpy.app.handlers import persistent
 from . import vu_meter
 from . import preferences
 
-from importlib import reload
-reload(vu_meter)
-reload(preferences)
-
 
 bl_info = {
     "name": "VSE Volume Meter",
