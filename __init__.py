@@ -23,12 +23,15 @@ from bpy.app.handlers import persistent
 from . import vu_meter
 from . import preferences
 
+from . import __refresh__
+__refresh__.reload_modules()
+
 
 bl_info = {
     "name": "VSE Volume Meter",
     "description": "Just the volume meter from VSEQF (https://github.com/snuq/VSEQF)",
     "author": "Paolo Acampora, forked from Hudson Barkley (Snu/snuq/Aritodo)",
-    "version": (3, 1, 1),
+    "version": (1, 0, 2),
     "blender": (3, 1, 0),
     "location": "Sequencer",
     "wiki_url": "https://github.com/snuq/VSEQF",

@@ -66,6 +66,8 @@ def get_volume_unit(frame=None):
 
 
 def vu_meter_calculate(scene):
+    if not bpy.context.screen:
+        return
     if scene != bpy.context.scene:
         return
 
