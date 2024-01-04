@@ -4,6 +4,17 @@ import blf
 from gpu_extras.batch import batch_for_shader
 
 
+if bpy.app.version[0] < 4:
+    UNIFORM_COLOR = '2D_UNIFORM_COLOR'
+
+    def set_font_size(fontid, size, dpi=72):
+        blf.size(fontid, size, dpi)
+
+else:
+    UNIFORM_COLOR = 'UNIFORM_COLOR'
+    set_font_size = blf.size
+
+
 class VSEQFTempSettings(object):
     """Substitute for the addon preferences when this script isn't loaded as an addon"""
     parenting = True
@@ -19,7 +30,7 @@ class VSEQFTempSettings(object):
 #Drawing functions
 def draw_line(sx, sy, ex, ey, color=(1.0, 1.0, 1.0, 1.0)):
     coords = [(sx, sy), (ex, ey)]
-    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+    shader = gpu.shader.from_builtin(UNIFORM_COLOR)
     batch = batch_for_shader(shader, 'LINES', {'pos': coords})
     shader.bind()
     shader.uniform_float('color', color)
@@ -29,7 +40,7 @@ def draw_line(sx, sy, ex, ey, color=(1.0, 1.0, 1.0, 1.0)):
 def draw_rect(x, y, w, h, color=(1.0, 1.0, 1.0, 1.0)):
     vertices = ((x, y), (x+w, y), (x, y+h), (x+w, y+h))
     indices = ((0, 1, 2), (2, 1, 3))
-    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+    shader = gpu.shader.from_builtin(UNIFORM_COLOR)
     batch = batch_for_shader(shader, 'TRIS', {"pos": vertices}, indices=indices)
     shader.bind()
     shader.uniform_float('color', color)
@@ -39,7 +50,7 @@ def draw_rect(x, y, w, h, color=(1.0, 1.0, 1.0, 1.0)):
 def draw_tri(v1, v2, v3, color=(1.0, 1.0, 1.0, 1.0)):
     vertices = (v1, v2, v3)
     indices = ((0, 1, 2), )
-    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+    shader = gpu.shader.from_builtin(UNIFORM_COLOR)
     batch = batch_for_shader(shader, 'TRIS', {"pos": vertices}, indices=indices)
     shader.bind()
     shader.uniform_float('color', color)
@@ -55,7 +66,7 @@ def draw_text(x, y, size, text, justify='left', color=(1.0, 1.0, 1.0, 1.0)):
     else:
         text_width = 0
     blf.position(font_id, x - text_width, y, 0)
-    blf.size(font_id, size, 72)
+    set_font_size(font_id, size)
     blf.draw(font_id, text)
 
 
