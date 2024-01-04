@@ -31,7 +31,7 @@ bl_info = {
     "name": "VSE Volume Meter",
     "description": "Just the volume meter from VSEQF (https://github.com/snuq/VSEQF)",
     "author": "Paolo Acampora, forked from Hudson Barkley (Snu/snuq/Aritodo)",
-    "version": (1, 0, 2),
+    "version": (1, 0, 3),
     "blender": (3, 1, 0),
     "location": "Sequencer",
     "wiki_url": "https://github.com/snuq/VSEQF",
